@@ -1,5 +1,5 @@
 name: 'Snyk SCA scan and publish to Unify Platform'
-description: 'Runs Snyk Software Composition Analysis scan to detect security vulnerabilities in open source dependencies and publishes to the Unify platform.'
+description: 'Runs Snyk SCA scan to detect security vulnerabilities in open source dependencies and publishes to the Unify platform.'
 
 inputs:
   cloudbees-url:
