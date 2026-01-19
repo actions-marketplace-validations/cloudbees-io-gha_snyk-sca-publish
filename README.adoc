@@ -176,7 +176,7 @@ In the following example, a specific build directory is specified:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
-          build-directory: './build'
+          build-directory: app
 
 ----
 
