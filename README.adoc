@@ -142,25 +142,6 @@ The following is a basic example of using this action:
 
 ----
 
-=== Using CLI parameters
-
-In the following example, additional CLI parameters are passed to the Snyk scanner:
-
-[source,yaml]
-----
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Scan with Snyk SCA with CLI parameters
-        uses: cloudbees-io-gha/snyk-sca-publish@v1
-        with:
-          snyk-token: ${{ secrets.SNYK_TOKEN }}
-          org-id: ${{ vars.SNYK_ORG_ID }}
-          cli-params: '--all-projects'
-
-----
-
 === Using build directory
 
 In the following example, a specific build directory is specified:
@@ -386,6 +367,7 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
+          cli-params: --all-projects
 
 ----
 
@@ -418,8 +400,12 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
+          cli-params: --all-projects -- -s /cloudbees/workspace/settings.xml
+          build-directory: app
 
 ----
+
+NOTE: In the Java example above, `--all-projects` scans all Maven modules in a multi-module project, and `-- -s /cloudbees/workspace/settings.xml` passes Maven-specific arguments to use a custom settings file.
 
 == License
 
