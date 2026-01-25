@@ -1,6 +1,6 @@
-= Snyk SCA scan and publish to Platform
+= Snyk SCA scan and publish to Unify Platform
 
-Use this action to scan Software Composition Analysis (SCA) repositories for security vulnerabilities in open source dependencies with the Snyk SCA scanner.
+Use this action to scan Software Composition Analysis (SCA) repositories for security vulnerabilities in open source dependencies with the Snyk SCA scanner and publish results to the CloudBees Unify platform.
 The action output can be used as a quality gate in subsequent GitHub Actions steps or jobs.
 
 Snyk Software Composition Analysis (SCA) is a developer-first security solution that scans and monitors open source dependencies for security vulnerabilities and licensing issues.
@@ -67,10 +67,15 @@ NOTE: For more information about Snyk SCA, refer to the link:https://docs.snyk.i
 | Yes
 | The Snyk organization ID.
 
-| `severity-threshold`
+| `cli-params`
 | String
 | No
-| Report only vulnerabilities of provided level or higher (low, medium, high, critical).
+| Additional CLI parameters to pass to the Snyk CLI. Common examples: `--all-projects` to scan all projects in a monorepo, `--severity-threshold=high` to only report high severity issues, or `--` followed by build tool arguments (e.g., `-- -s settings.xml` for Maven).
+
+| `build-directory`
+| String
+| No
+| The directory containing the project to scan. Use this when your build files (pom.xml, package.json, etc.) are in a subdirectory. Paths are relative to the workspace root.
 
 | `ref`
 | String
@@ -137,9 +142,9 @@ The following is a basic example of using this action:
 
 ----
 
-=== Using severity threshold
+=== Using build directory
 
-In the following example, the scan will only report issues of high or critical severity:
+In the following example, a specific build directory is specified:
 
 [source,yaml]
 ----
@@ -147,12 +152,12 @@ In the following example, the scan will only report issues of high or critical s
       id-token: write
       contents: read
     steps:
-      - name: Scan with Snyk SCA with severity threshold
+      - name: Scan with Snyk SCA with build directory
         uses: cloudbees-io-gha/snyk-sca-publish@v1
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
-          severity-threshold: 'high'
+          build-directory: app
 
 ----
 
@@ -238,7 +243,6 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
-          severity-threshold: 'high'
 
       - name: Source dir examine
         run: |
@@ -313,7 +317,6 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
-          severity-threshold: 'medium'
 
       - name: Source dir examine
         run: |
@@ -364,7 +367,7 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
-          severity-threshold: 'medium'
+          cli-params: --all-projects
 
 ----
 
@@ -397,8 +400,12 @@ jobs:
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
           org-id: ${{ vars.SNYK_ORG_ID }}
+          cli-params: --all-projects -- -s /cloudbees/workspace/settings.xml
+          build-directory: app
 
 ----
+
+NOTE: In the Java example above, `--all-projects` scans all Maven modules in a multi-module project, and `-- -s /cloudbees/workspace/settings.xml` passes Maven-specific arguments to use a custom settings file.
 
 == License
 
